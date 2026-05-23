@@ -38,9 +38,14 @@ public class Booking {
     @Column(nullable = false)
     private BookingState state;
 
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(nullable = false)
+    private TypeTicket ticket;
+
     public Booking() {}
 
-    public Booking(Long id, String seatLabel, Users user, LocalDateTime createdAt, LocalDateTime expiresAt, BigDecimal price, BookingState state, Session session) {
+    public Booking(Long id, String seatLabel, Users user, LocalDateTime createdAt, LocalDateTime expiresAt, BigDecimal price, BookingState state, Session session, TypeTicket ticket) {
         this.id = id;
         this.seatLabel = seatLabel;
         this.user = user;
@@ -49,15 +54,17 @@ public class Booking {
         this.price = price;
         this.state = state;
         this.session = session;
+        this.ticket = ticket;
     }
 
-    public Booking(String seatLabel, Users user, LocalDateTime expiresAt, BigDecimal price, BookingState state, Session session) {
+    public Booking(String seatLabel, Users user, LocalDateTime expiresAt, BigDecimal price, BookingState state, Session session, TypeTicket ticket) {
         this.seatLabel = seatLabel;
         this.user = user;
         this.expiresAt = expiresAt;
         this.price = price;
         this.state = state;
         this.session = session;
+        this.ticket = ticket;
     }
 
     public Long getId() {
@@ -115,5 +122,13 @@ public class Booking {
 
     public void setState(BookingState state) {
         this.state = state;
+    }
+
+    public TypeTicket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(TypeTicket ticket) {
+        this.ticket = ticket;
     }
 }
