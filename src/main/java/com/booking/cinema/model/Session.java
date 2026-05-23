@@ -50,19 +50,19 @@ public class Session {
         return id;
     }
 
-    public Movie getMovieId() {
+    public Movie getMovie() {
         return movie;
     }
 
-    public void setMovieId(Movie movie) {
+    public void setMovie(Movie movie) {
         this.movie = movie;
     }
 
-    public Room getRoomId() {
+    public Room getRoom() {
         return room;
     }
 
-    public void setRoomId(Room room) {
+    public void setRoom(Room room) {
         this.room = room;
     }
 
