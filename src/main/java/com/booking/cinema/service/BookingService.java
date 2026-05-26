@@ -31,10 +31,10 @@ public class BookingService {
 
     @Transactional
     public BookingResponseDTO save(BookingRequestDTO bookingRequestDTO) {
-        Session session = sessionRepository.findById(bookingRequestDTO.sessionId()).orElseThrow(() -> new EntityNotFoundException("Session not found!"));
+        Session session = sessionRepository.findById(bookingRequestDTO.sessionId()).orElseThrow(() -> new BusinessRuleException("Session not found!"));
 
         if (!session.getStartTime().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Session unavailable!");
+            throw new BusinessRuleException("Session unavailable!");
         }
 
         validateSeat(bookingRequestDTO.seatLabel(), session.getRoom());
@@ -43,12 +43,12 @@ public class BookingService {
         boolean seatOccupied = bookingRepository.isSeatOccupied(session.getId(), bookingRequestDTO.seatLabel(), excludedStates);
 
         if (seatOccupied) {
-            throw new BusinessRuleException("Seat number " + bookingRequestDTO.seatLabel() + "occupied!");
+            throw new BusinessRuleException("Seat number " + bookingRequestDTO.seatLabel() + " occupied!");
         }
 
         BigDecimal price = (bookingRequestDTO.ticket() == TypeTicket.MEIA_ENTRADA) ? session.getPrice().multiply(BigDecimal.valueOf(0.5)) : session.getPrice();
 
-        Users user = userRepository.findById(bookingRequestDTO.userId()).orElseThrow(() -> new IllegalArgumentException("User not found!"));
+        Users user = userRepository.findById(bookingRequestDTO.userId()).orElseThrow(() -> new BusinessRuleException("User not found!"));
 
         Booking booking = new Booking();
         booking.setSeatLabel(bookingRequestDTO.seatLabel());
@@ -77,14 +77,14 @@ public class BookingService {
     }
 
     public BookingResponseDTO findById(Long id) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("booking not found with ID: " + id));
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new BusinessRuleException("booking not found with ID: " + id));
 
         return new BookingResponseDTO(booking.getId(), booking.getSession().getId(), booking.getUser().getId(), booking.getSeatLabel(), booking.getPrice(), booking.getState(), booking.getTicket());
     }
 
     public void delete(Long id) {
         if (!bookingRepository.existsById(id)) {
-            throw new EntityNotFoundException("booking not found");
+            throw new BusinessRuleException("booking not found");
         }
 
         bookingRepository.deleteById(id);
@@ -99,25 +99,35 @@ public class BookingService {
         }
     }
 
+    public void confirmBooking(Long bookingId){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new BusinessRuleException("booking not found with ID: " + bookingId));
+        booking.setState(BookingState.APPROVED);
+    }
+
+    public void cancelBooking(Long bookingId){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new BusinessRuleException("booking not found with ID: " + bookingId));
+        booking.setState(BookingState.CANCELED);
+    }
+
     private void validateSeat(String seatLabel, Room room) {
         if (seatLabel == null || seatLabel.length() < 2) {
-            throw new IllegalArgumentException("Invalid seat label format!");
+            throw new BusinessRuleException("Invalid seat label format!");
         }
 
         char rowLetter = seatLabel.toUpperCase().charAt(0);
         int rowIndex = (rowLetter - 'A') + 1;
 
         if (rowIndex > room.getTotalRows() || rowIndex < 1) {
-            throw new IllegalArgumentException("Invalid row number!");
+            throw new BusinessRuleException("Invalid row number!");
         }
 
         try {
             int seatNumber = Integer.parseInt(seatLabel.substring(1));
             if (seatNumber > room.getSeatPerRow() || seatNumber < 1) {
-                throw new IllegalArgumentException("Invalid seat number for this room!");
+                throw new BusinessRuleException("Invalid seat number for this room!");
             }
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Seat number must be a valid integer!" + e.getMessage());
+            throw new BusinessRuleException("Seat number must be a valid integer! " + e.getMessage());
         }
     }
 
