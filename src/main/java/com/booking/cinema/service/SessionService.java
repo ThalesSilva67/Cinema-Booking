@@ -32,13 +32,13 @@ public class SessionService {
 
         Session sessionEntity = new Session();
         sessionEntity.setRoom(room);
-        sessionEntity.setMovieId(movie);
+        sessionEntity.setMovie(movie);
         sessionEntity.setPrice(sessionDTO.price());
         sessionEntity.setStartTime(sessionDTO.startTime());
 
         Session saved = sessionRepository.save(sessionEntity);
 
-        return new SessionResponseDTO(saved.getId(), saved.getRoom().getId(), saved.getMovieId().getId(), saved.getStartTime(), saved.getPrice());
+        return new SessionResponseDTO(saved.getId(), saved.getRoom().getId(), saved.getMovie().getId(), saved.getStartTime(), saved.getPrice());
     }
 
     public List<SessionResponseDTO> findAll() {
@@ -48,7 +48,7 @@ public class SessionService {
 
         List<SessionResponseDTO> listDto = new ArrayList<>();
         for (Session session : list) {
-            listDto.add(new SessionResponseDTO(session.getId(), session.getRoom().getId(), session.getMovieId().getId(), session.getStartTime(), session.getPrice()));
+            listDto.add(new SessionResponseDTO(session.getId(), session.getRoom().getId(), session.getMovie().getId(), session.getStartTime(), session.getPrice()));
         }
 
         return listDto;
@@ -57,7 +57,7 @@ public class SessionService {
     public SessionResponseDTO findById(Long id) {
         Session session = sessionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Session not found with ID: " + id));
 
-        return new SessionResponseDTO(session.getId(), session.getRoom().getId(), session.getMovieId().getId(), session.getStartTime(), session.getPrice());
+        return new SessionResponseDTO(session.getId(), session.getRoom().getId(), session.getMovie().getId(), session.getStartTime(), session.getPrice());
     }
 
     public void delete(Long id) {
@@ -73,13 +73,13 @@ public class SessionService {
         Room room = roomRepository.findById(session.roomId()).orElseThrow(() -> new IllegalArgumentException("Room not found!"));
         Movie movie = movieRepository.findById(session.movieId()).orElseThrow(() -> new IllegalArgumentException("Movie not found!"));
 
-        oldSession.setMovieId(movie);
+        oldSession.setMovie(movie);
         oldSession.setRoom(room);
         oldSession.setStartTime(session.startTime());
         oldSession.setPrice(session.price());
 
         Session update = sessionRepository.save(oldSession);
 
-        return new SessionResponseDTO(update.getId(), update.getRoom().getId(), update.getMovieId().getId(), update.getStartTime(), update.getPrice());
+        return new SessionResponseDTO(update.getId(), update.getRoom().getId(), update.getMovie().getId(), update.getStartTime(), update.getPrice());
     }
 }
