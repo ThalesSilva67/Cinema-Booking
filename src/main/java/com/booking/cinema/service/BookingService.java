@@ -2,11 +2,13 @@ package com.booking.cinema.service;
 
 import com.booking.cinema.dto.request.BookingRequestDTO;
 import com.booking.cinema.dto.response.BookingResponseDTO;
+import com.booking.cinema.exception.BusinessRuleException;
 import com.booking.cinema.model.*;
 import com.booking.cinema.repository.BookingRepository;
 import com.booking.cinema.repository.SessionRepository;
 import com.booking.cinema.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +43,7 @@ public class BookingService {
         boolean seatOccupied = bookingRepository.isSeatOccupied(session.getId(), bookingRequestDTO.seatLabel(), excludedStates);
 
         if (seatOccupied) {
-            throw new IllegalArgumentException("Seat number " + bookingRequestDTO.seatLabel() + "occupied!");
+            throw new BusinessRuleException("Seat number " + bookingRequestDTO.seatLabel() + "occupied!");
         }
 
         BigDecimal price = (bookingRequestDTO.ticket() == TypeTicket.MEIA_ENTRADA) ? session.getPrice().multiply(BigDecimal.valueOf(0.5)) : session.getPrice();
@@ -81,11 +83,20 @@ public class BookingService {
     }
 
     public void delete(Long id) {
-        if(!bookingRepository.existsById(id)){
+        if (!bookingRepository.existsById(id)) {
             throw new EntityNotFoundException("booking not found");
         }
 
         bookingRepository.deleteById(id);
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
+    public void cleanUpExpiredBooking() {
+        int canceledCount = bookingRepository.cancelExpiredBooking(LocalDateTime.now());
+        if (canceledCount > 0) {
+            System.out.println("Faxina automática: " + canceledCount + " ingressos expirados foram liberados!");
+        }
     }
 
     private void validateSeat(String seatLabel, Room room) {

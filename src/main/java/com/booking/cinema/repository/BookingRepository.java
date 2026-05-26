@@ -3,10 +3,12 @@ package com.booking.cinema.repository;
 import com.booking.cinema.model.Booking;
 import com.booking.cinema.model.BookingState;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -24,4 +26,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     boolean isSeatOccupied(@Param("sessionId") Long sessionId,
                          @Param("seatLabel") String seatLabel,
                          @Param("invalidStates") List<BookingState> invalidStates);
+
+    @Modifying
+    @Query("""
+            UPDATE Booking b
+            SET b.state = 'CANCELED'
+            WHERE b.state = 'PENDING'
+            AND b.expiresAt < :now
+            """)
+    int cancelExpiredBooking(@Param("now") LocalDateTime now);
 }
