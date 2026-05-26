@@ -1,0 +1,1 @@
+ALTER TYPE type_ticket ADD VALUE 'MEIA_ENTRADA';
