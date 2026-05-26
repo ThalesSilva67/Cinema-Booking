@@ -45,11 +45,27 @@ public class UserService {
         return userMapper.toUserResponseDTO(saved);
     }
 
-    public LoginResponseDTO login(LoginRequestDTO request) {
+    public UserResponseDTO registerAdmin(RegisterRequestDTO request) {
+        userRepository.findByEmail(request.email()).ifPresent(user -> {
+            throw new DuplicateEmailException("Email already exists");
+        });
+
+        Users user = new Users();
+        user.setName(request.name());
+        user.setEmail(request.email());
+        user.setPassword(encoder.encode(request.password()));
+        user.setRole(Role.ADMINISTRADOR);
+
+        Users saved = userRepository.save(user);
+
+        return userMapper.toUserResponseDTO(saved);
+    }
+
+    public Users login(LoginRequestDTO request) {
         Users user = userRepository.findByEmail(request.email()).orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
         if(!encoder.matches(request.password(), user.getPassword())) throw new InvalidCredentialsException("Invalid credentials");
 
-        return userMapper.toLoginResponseDTO("Login realizado com sucesso!");
+        return user;
     }
 
     public List<UserResponseDTO> findAll() {
