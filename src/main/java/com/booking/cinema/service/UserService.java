@@ -11,6 +11,7 @@ import com.booking.cinema.model.Users;
 import com.booking.cinema.model.Role;
 import com.booking.cinema.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,10 +21,12 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder encoder;
 
-    public UserService(UserRepository userRepository,  UserMapper userMapper) {
+    public UserService(UserRepository userRepository,  UserMapper userMapper,  PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.encoder = encoder;
     }
 
     public UserResponseDTO register(RegisterRequestDTO request) {
@@ -34,7 +37,7 @@ public class UserService {
         Users user = new Users();
         user.setName(request.name());
         user.setEmail(request.email());
-        user.setPassword(request.password());
+        user.setPassword(encoder.encode(request.password()));
         user.setRole(Role.STANDARD);
 
         Users saved = userRepository.save(user);
@@ -44,9 +47,8 @@ public class UserService {
 
     public LoginResponseDTO login(LoginRequestDTO request) {
         Users user = userRepository.findByEmail(request.email()).orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
-        if (!request.password().equals(user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid credentials");
-        }
+        if(!encoder.matches(request.password(), user.getPassword())) throw new InvalidCredentialsException("Invalid credentials");
+
         return userMapper.toLoginResponseDTO("Login realizado com sucesso!");
     }
 
