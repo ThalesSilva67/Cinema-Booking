@@ -1,4 +1,6 @@
 package com.booking.cinema.dto.response;
 
-public record UserResponseDTO(Long id, String name, String email) {
+import com.booking.cinema.model.Role;
+
+public record UserResponseDTO(Long id, String name, String email, Role role) {
 }
