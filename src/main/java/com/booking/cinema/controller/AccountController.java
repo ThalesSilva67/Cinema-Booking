@@ -1,5 +1,6 @@
 package com.booking.cinema.controller;
 
+import com.booking.cinema.doc.AccountControllerDoc;
 import com.booking.cinema.dto.request.LoginRequestDTO;
 import com.booking.cinema.dto.request.RegisterRequestDTO;
 import com.booking.cinema.dto.response.LoginResponseDTO;
@@ -7,7 +8,6 @@ import com.booking.cinema.dto.response.UserResponseDTO;
 import com.booking.cinema.model.Users;
 import com.booking.cinema.security.jwt.JwtProvider;
 import com.booking.cinema.service.UserService;
-
 import com.booking.cinema.service.auth.CustomUserDetails;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/account")
-public class AccountController {
+public class AccountController implements AccountControllerDoc {
     private final UserService userService;
     private final JwtProvider jwtProvider;
 
@@ -60,7 +60,7 @@ public class AccountController {
     @GetMapping("/me")
     public ResponseEntity<UserResponseDTO> me(@AuthenticationPrincipal CustomUserDetails userLogged) {
         Users user = userLogged.getUser();
-        UserResponseDTO response = new UserResponseDTO(user.getId(), user.getName(), user.getEmail());
+        UserResponseDTO response = new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole());
 
         return ResponseEntity.ok().body(response);
     }
