@@ -1,5 +1,6 @@
 package com.booking.cinema.controller;
 
+import com.booking.cinema.doc.PaymentControllerDoc;
 import com.booking.cinema.dto.request.BookingRequestId;
 import com.booking.cinema.dto.response.PaymentResponseDTO;
 import com.booking.cinema.service.PaymentService;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/payments")
-public class PaymentController {
+public class PaymentController implements PaymentControllerDoc {
     private final PaymentService paymentService;
     private final StripeWebhookAdapter stripeWebhookAdapter;
 
