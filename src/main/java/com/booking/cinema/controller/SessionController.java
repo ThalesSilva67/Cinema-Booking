@@ -1,5 +1,6 @@
 package com.booking.cinema.controller;
 
+import com.booking.cinema.doc.SessionControllerDoc;
 import com.booking.cinema.dto.request.SessionRequestDTO;
 import com.booking.cinema.dto.response.SessionResponseDTO;
 import com.booking.cinema.service.SessionService;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/sessions")
-public class SessionController {
+public class SessionController implements SessionControllerDoc {
     private final SessionService sessionService;
 
     public SessionController(SessionService sessionService) {
