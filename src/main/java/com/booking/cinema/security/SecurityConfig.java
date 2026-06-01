@@ -35,7 +35,10 @@ public class SecurityConfig {
                     auth.requestMatchers(
                             "/api/account/register",
                             "/api/account/login",
-                            "/api/payments/webhook"
+                            "/api/payments/webhook",
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html"
                     ).permitAll();
 
                     auth.requestMatchers(HttpMethod.POST, "/api/movies").hasRole("ADMINISTRADOR");
