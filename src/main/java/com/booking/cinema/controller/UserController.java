@@ -1,5 +1,6 @@
 package com.booking.cinema.controller;
 
+import com.booking.cinema.doc.UserControllerDoc;
 import com.booking.cinema.dto.request.RegisterRequestDTO;
 import com.booking.cinema.dto.response.UserResponseDTO;
 import com.booking.cinema.service.UserService;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class UserController implements UserControllerDoc {
     private final UserService userService;
 
     public UserController(UserService userService) {
