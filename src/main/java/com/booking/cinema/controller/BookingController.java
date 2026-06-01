@@ -1,5 +1,6 @@
 package com.booking.cinema.controller;
 
+import com.booking.cinema.doc.BookingControllerDoc;
 import com.booking.cinema.dto.request.BookingRequestDTO;
 import com.booking.cinema.dto.response.BookingResponseDTO;
 import com.booking.cinema.service.BookingService;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
-public class BookingController {
+public class BookingController implements BookingControllerDoc {
     private final BookingService bookingService;
     
     public BookingController(BookingService bookingService) {
