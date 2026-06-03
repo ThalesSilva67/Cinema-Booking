@@ -48,21 +48,21 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/api/rooms/**").permitAll();
                     auth.requestMatchers(HttpMethod.GET, "/api/sessions/**").permitAll();
 
-                    auth.requestMatchers(HttpMethod.POST, "/api/movies").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.POST, "/api/rooms").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.POST, "/api/sessions").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.POST, "/api/users/admin").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.POST, "/api/movies").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.POST, "/api/rooms").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.POST, "/api/sessions").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.POST, "/api/users/admin").hasAuthority("ROLE_ADMINISTRADOR");
 
 
-                    auth.requestMatchers(HttpMethod.PUT, "/api/movies/**").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/sessions/**").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/users/admin/**").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/movies/**").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/sessions/**").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/users/admin/**").hasAuthority("ROLE_ADMINISTRADOR");
 
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/sessions/**").hasAuthority("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/users/admin/**").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/sessions/**").hasAuthority("ROLE_ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/users/admin/**").hasAuthority("ROLE_ADMINISTRADOR");
 
                     auth.anyRequest().authenticated();
                 })
