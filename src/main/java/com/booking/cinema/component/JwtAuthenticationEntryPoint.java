@@ -1,4 +1,4 @@
-package com.booking.cinema.security.jwt;
+package com.booking.cinema.component;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
