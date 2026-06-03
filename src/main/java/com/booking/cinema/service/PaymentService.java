@@ -27,6 +27,8 @@ public class PaymentService {
 
     @Value("${api.stripe.key}")
     private String stripeSecretKey;
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
     private final PaymentRepository paymentRepository;
     private final BookingService bookingService;
     private final BookingRepository bookingRepository;
@@ -61,8 +63,8 @@ public class PaymentService {
         SessionCreateParams params = SessionCreateParams
                 .builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:8080/success")
-                .setCancelUrl("http://localhost:8080/canceled")
+                .setSuccessUrl(frontendUrl + "/success")
+                .setCancelUrl(frontendUrl + "/canceled")
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                                 .setQuantity(1L)

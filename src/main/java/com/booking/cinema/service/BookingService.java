@@ -7,7 +7,6 @@ import com.booking.cinema.model.*;
 import com.booking.cinema.repository.BookingRepository;
 import com.booking.cinema.repository.SessionRepository;
 import com.booking.cinema.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
