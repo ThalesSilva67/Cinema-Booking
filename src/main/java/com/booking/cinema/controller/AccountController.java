@@ -50,6 +50,7 @@ public class AccountController implements AccountControllerDoc {
                 .secure(false)
                 .path("/")
                 .maxAge(3600)
+                .sameSite("Lax")
                 .build();
 
         LoginResponseDTO response = new LoginResponseDTO("Login realizado com sucesso! Bem-vindo.");
