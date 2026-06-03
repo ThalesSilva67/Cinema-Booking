@@ -1,6 +1,7 @@
 package com.booking.cinema.security;
 
-import com.booking.cinema.security.jwt.JwtAuthenticationEntryPoint;
+import com.booking.cinema.component.CustomAccessDeniedHandler;
+import com.booking.cinema.component.JwtAuthenticationEntryPoint;
 import com.booking.cinema.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,10 +21,12 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter authenticationFilter;
     private final JwtAuthenticationEntryPoint authEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    public SecurityConfig(JwtAuthenticationFilter authenticationFilter,  JwtAuthenticationEntryPoint authEntryPoint) {
+    public SecurityConfig(JwtAuthenticationFilter authenticationFilter,  JwtAuthenticationEntryPoint authEntryPoint,  CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.authenticationFilter = authenticationFilter;
         this.authEntryPoint = authEntryPoint;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean
@@ -41,25 +44,29 @@ public class SecurityConfig {
                             "/swagger-ui.html"
                     ).permitAll();
 
-                    auth.requestMatchers(HttpMethod.POST, "/api/movies").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.POST, "/api/rooms").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.POST, "/api/sessions").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.POST, "/api/users/admin").hasRole("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/rooms/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/sessions/**").permitAll();
+
+                    auth.requestMatchers(HttpMethod.POST, "/api/movies").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.POST, "/api/rooms").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.POST, "/api/sessions").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.POST, "/api/users/admin").hasAuthority("ADMINISTRADOR");
 
 
-                    auth.requestMatchers(HttpMethod.PUT, "/api/movies/**").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/sessions/**").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.PUT, "/api/users/admin/**").hasRole("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/movies/**").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/sessions/**").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.PUT, "/api/users/admin/**").hasAuthority("ADMINISTRADOR");
 
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/sessions/**").hasRole("ADMINISTRADOR");
-                    auth.requestMatchers(HttpMethod.DELETE, "/api/users/admin/**").hasRole("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/movies/**").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/sessions/**").hasAuthority("ADMINISTRADOR");
+                    auth.requestMatchers(HttpMethod.DELETE, "/api/users/admin/**").hasAuthority("ADMINISTRADOR");
 
                     auth.anyRequest().authenticated();
                 })
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint).accessDeniedHandler(customAccessDeniedHandler))
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

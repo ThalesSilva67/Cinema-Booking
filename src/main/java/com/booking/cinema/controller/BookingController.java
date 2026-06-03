@@ -33,13 +33,6 @@ public class BookingController implements BookingControllerDoc {
 
         return ResponseEntity.ok(response);
     }
-    
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        bookingService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
 
     @GetMapping
     public ResponseEntity<List<BookingResponseDTO>> getAll() {
