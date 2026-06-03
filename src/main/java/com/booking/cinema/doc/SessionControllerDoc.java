@@ -19,7 +19,7 @@ import java.util.List;
 
 @Tag(
         name = "Sessions",
-        description = "Criar, Buscar, atualizar e deletar sessões"
+        description = "Criar, buscar, atualizar e deletar sessões"
 )
 public interface SessionControllerDoc {
 
@@ -33,7 +33,7 @@ public interface SessionControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Erro de validação (ex: conflito de horário)",
+                            description = "Erro de validação (ex: conflito de horário ou dados inválidos)",
                             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))
                     )
             }
@@ -49,7 +49,7 @@ public interface SessionControllerDoc {
                                             {
                                             "movieId": 1,
                                             "roomId": 2,
-                                            "startTime": "2024-05-10T20:00:00"
+                                            "startTime": "2024-05-10T20:00:00",
                                             "price": 20.00
                                             }
                                             """
@@ -87,6 +87,11 @@ public interface SessionControllerDoc {
                             description = "Sessão atualizada com sucesso"
                     ),
                     @ApiResponse(
+                            responseCode = "400",
+                            description = "Erro de validação nos dados enviados",
+                            content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))
+                    ),
+                    @ApiResponse(
                             responseCode = "404",
                             description = "Sessão não encontrada",
                             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))
@@ -96,6 +101,21 @@ public interface SessionControllerDoc {
     ResponseEntity<SessionResponseDTO> update(
             @Parameter(description = "ID da sessão", example = "1", required = true)
             @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Dados para atualizar a sessão",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = SessionRequestDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Sessão válida",
+                                    value = """
+                                            {
+                                            "movieId": 1,
+                                            "roomId": 2,
+                                            "startTime": "2024-05-10T20:00:00",
+                                            "price": 25.00
+                                            }
+                                            """
+                            )))
             @Valid @RequestBody SessionRequestDTO request);
 
     @Operation(

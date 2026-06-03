@@ -7,13 +7,12 @@ import com.booking.cinema.dto.response.LoginResponseDTO;
 import com.booking.cinema.dto.response.UserResponseDTO;
 import com.booking.cinema.service.auth.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(
         name = "Account",
-        description = "Register, Login, Me, Logout"
+        description = "Gerenciamento de contas, autenticação e perfil do usuário"
 )
 public interface AccountControllerDoc {
 
     @Operation(
-            summary = "Register",
-            description = "Cria uma conta para um usuário comum",
+            summary = "Cadastrar Usuário",
+            description = "Cria uma nova conta para um usuário comum no sistema.",
             responses = {
                     @ApiResponse(
                             responseCode = "201",
@@ -35,35 +34,35 @@ public interface AccountControllerDoc {
                     ),
                     @ApiResponse(
                             responseCode = "400",
-                            description = "Dados inválidos",
+                            description = "Dados de cadastro inválidos ou e-mail já existente",
                             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))
                     )
             }
     )
-    ResponseEntity<UserResponseDTO> register
-            (
-                    @Valid
-                    @RequestBody
-                    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                            description = "Dados necessários para cadastrar um usuário",
-                            required = true,
-                            content = @Content(schema = @Schema(implementation = UserResponseDTO.class),
-                                    examples = @ExampleObject(
-                                            name = "Usuário válido",
-                                            value = """
-                                                    {
-                                                    "name": Shin Nouzen,
-                                                    "email": shinNouzen86@gmail.com,
-                                                    "password": your-password-here
-                                                    }
-                                                    """
-                                    ))
-                    ) RegisterRequestDTO request
-            );
+    ResponseEntity<UserResponseDTO> register(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Dados necessários para o cadastro",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = RegisterRequestDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Cadastro válido",
+                                    value = """
+                                            {
+                                            "name": "Shin Nouzen",
+                                            "email": "shinNouzen86@gmail.com",
+                                            "password": "strong-password-123"
+                                            }
+                                            """
+                            ))
+            )
+            @Valid
+            @RequestBody
+            RegisterRequestDTO request
+    );
 
     @Operation(
-            summary = "Login",
-            description = "Autentica um usuário",
+            summary = "Realizar Login",
+            description = "Autentica um usuário existente e retorna as credenciais/tokens de sessão.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -76,55 +75,44 @@ public interface AccountControllerDoc {
                     )
             }
     )
-    ResponseEntity<LoginResponseDTO> login
-            (@RequestBody
-             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                     description = "Dados necessários para autenticar um usuário",
-                     required = true,
-                     content = @Content(schema = @Schema(implementation = LoginRequestDTO.class),
-                             examples = @ExampleObject(
-                                     name = "Login válido",
-                                     value = """
-                                             {
-                                             "email": shinNouzen86@gmail.com,
-                                             "password": your-password-here
-                                             }
-                                             """
-                             ))
-             )
-             LoginRequestDTO user);
+    ResponseEntity<LoginResponseDTO> login(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Credenciais de acesso do usuário",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = LoginRequestDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Login válido",
+                                    value = """
+                                            {
+                                            "email": "shinNouzen86@gmail.com",
+                                            "password": "strong-password-123"
+                                            }
+                                            """
+                            ))
+            )
+            @Valid
+            @RequestBody
+            LoginRequestDTO user
+    );
 
     @Operation(
-            summary = "me",
-            description = "Retorna dados do usuário logado",
+            summary = "Meu Perfil",
+            description = "Retorna os dados cadastrais do usuário atualmente autenticado no sistema.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Dados do usuário"
+                            description = "Dados do usuário retornados com sucesso"
                     ),
                     @ApiResponse(
-                            responseCode = "400",
-                            description = "Usuário não autenticado",
+                            responseCode = "401",
+                            description = "Usuário não autenticado no sistema",
                             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))
                     )
             }
     )
     ResponseEntity<UserResponseDTO> me(
+            @Parameter(hidden = true)
             @AuthenticationPrincipal
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Retorna dados do usuário logado",
-                    content = @Content(schema = @Schema(implementation = CustomUserDetails.class),
-                            examples = @ExampleObject(
-                                    name = "Dados do usuário",
-                                    value = """
-                                            {
-                                               "id": 1,
-                                               "name": Shin Nouzen,
-                                               "email": shinNouzen86@gmail.com,
-                                               "role": STANDARD ou ADMINISTRADOR
-                                            }
-                                            """
-                            )
-                    ))
-            CustomUserDetails userLogged);
+            CustomUserDetails userLogged
+    );
 }
